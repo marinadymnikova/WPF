@@ -1,0 +1,99 @@
+﻿using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Threading;
+
+namespace WpfApp1
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        private int score;
+        private int clickScoreIncrement;
+        private int clickUpgradeCost;
+        private DispatcherTimer timer;
+
+        private int timerScoreIncrement;
+        private int timerUpgradeCost;
+
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            score = 0;
+            clickScoreIncrement = 1;
+            clickUpgradeCost = 2;
+
+            timerScoreIncrement = 0;
+            timerUpgradeCost = 20;
+
+            timer = new DispatcherTimer();
+            timer.Interval = new TimeSpan(0, 0, 5);
+            timer.Tick += new EventHandler(timer_Tick);
+
+        }
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            score += timerScoreIncrement;
+            textBlockScore.Text = score.ToString();
+        }
+
+        private void buttonPressMe_Click(object sender, RoutedEventArgs e)
+        {
+            score += clickScoreIncrement;
+            textBlockScore.Text = score.ToString();
+        }
+
+        private void buttonBuyUpgrade_Click(object sender, RoutedEventArgs e)
+        {
+            if (score < clickUpgradeCost)
+            {
+                MessageBox.Show("У вас недостаточно очков для покупки");
+                return;
+            }
+
+            clickScoreIncrement++;
+            score -= clickUpgradeCost;
+            clickUpgradeCost *= 2;
+
+            textBlockScoreIncrement.Text = $"Очков за клик: {clickScoreIncrement}";
+            textBlockUpgradeCost.Text = $"Стоимость обновления: {clickUpgradeCost}";
+
+            textBlockScore.Text = score.ToString();
+        }
+
+        private void buttonBuyTimerUpgrade_Click(object sender, RoutedEventArgs e)
+        {
+            if (score < timerUpgradeCost)
+            {
+                MessageBox.Show("У вас недостаточно очков для покупки");
+                return;
+            }
+
+            if (timer.IsEnabled == false)
+            {
+                timer.Start();
+            }
+
+            timerScoreIncrement++;
+            score -= timerUpgradeCost;
+            timerUpgradeCost *= 2;
+
+            textBlockTimerScoreIncrement.Text = $"Очки за тик: {timerScoreIncrement}";
+            textBlockTimerUpgradeCost.Text = $"Стоимость обновления: {timerUpgradeCost}";
+
+            textBlockScore.Text = score.ToString();
+
+        }
+
+    }
+}
